@@ -102,4 +102,99 @@ RSpec.describe "Users", type: :request do
 
     end
 
+    it "doesn't create a user without a name" do
+      user_params = {
+        user: { 
+          age: 26, 
+          address: "San Diego, CA", 
+          email: "name@domain.com"
+        }
+      }
+
+      post '/users', params: user_params
+      
+      expect(response.status).to eq 422
+
+      json = JSON.parse(response.body)
+
+      expect(json['name']).to include "can't be blank"
+
+    end
+
+    it "doesn't create a user without an age" do
+      user_params = {
+        user: { 
+          name: "Jimbo", 
+          address: "San Diego, CA", 
+          email: "name@domain.com"
+        }
+      }
+
+      post '/users', params: user_params
+      
+      expect(response.status).to eq 422
+
+      json = JSON.parse(response.body)
+
+      expect(json['age']).to include "can't be blank"
+
+    end
+
+    it "doesn't create a user without an address" do
+      user_params = {
+        user: { 
+          name: "Jimbo", 
+          age: 26, 
+          email: "name@domain.com"
+        }
+      }
+
+      post '/users', params: user_params
+      
+      expect(response.status).to eq 422
+
+      json = JSON.parse(response.body)
+
+      expect(json['address']).to include "can't be blank"
+
+    end
+
+    it "doesn't create a user without an email" do
+      user_params = {
+        user: { 
+          name: "Jimbo", 
+          age: 26, 
+          address: "San Diego, CA"
+        }
+      }
+
+      post '/users', params: user_params
+      
+      expect(response.status).to eq 422
+
+      json = JSON.parse(response.body)
+
+      expect(json['email']).to include "can't be blank"
+
+    end
+
+    it "doesn't create a user without an address at least 10 characters long" do
+      user_params = {
+        user: { 
+          name: "Jimbo", 
+          age: 26,
+          address: "San Diego", 
+          email: "name@domain.com"
+        }
+      }
+
+      post '/users', params: user_params
+      
+      expect(response.status).to eq 422
+
+      json = JSON.parse(response.body)
+
+      expect(json['address']).to include "is too short (minimum is 10 characters)"
+
+    end
 end
